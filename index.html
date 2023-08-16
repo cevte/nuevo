@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firma Digital</title>
+</head>
+<body>
+    <h1>Firma Digital</h1>
+    <canvas id="signatureCanvas" width="400" height="200" style="border:1px solid black;"></canvas>
+    <br>
+    <button id="clearButton">Limpiar Firma</button>
+    <button id="saveButton">Guardar Firma</button>
+    <br>
+    <a id="downloadLink" style="display: none;">Descargar Firma</a>
+
+    <script>
+        const canvas = document.getElementById('signatureCanvas');
+        const clearButton = document.getElementById('clearButton');
+        const saveButton = document.getElementById('saveButton');
+        const downloadLink = document.getElementById('downloadLink');
+
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+
+        canvas.addEventListener('mousedown', () => isDrawing = true);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mouseout', () => isDrawing = false);
+
+        clearButton.addEventListener('click', clearCanvas);
+        saveButton.addEventListener('click', saveSignature);
+
+        function draw(e) {
+            if (!isDrawing) return;
+
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = 'black';
+
+            ctx.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            downloadLink.style.display = 'none';
+        }
+
+        function saveSignature() {
+            const image = canvas.toDataURL('image/png');
+            downloadLink.href = image;
+            downloadLink.download = 'firma.png';
+            downloadLink.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
